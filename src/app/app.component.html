@@ -1,0 +1,112 @@
+<nav class="navbar navbar-dark" style="background-color: #303248;">
+  <a class="navbar-brand" href="#">
+    <img src="/assets/img/logo.png" width="100" class="d-inline-block align-top" alt="">
+  </a>
+</nav>
+
+<div class="container py-4 px-5">
+  <form [formGroup]="myForm">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="active" (navChange)="onNavChange($event)" class="nav-tabs">
+      <li [ngbNavItem]="1">
+        <a ngbNavLink>Type du bien</a>
+        <ng-template ngbNavContent>
+          <div class="inputs-holder">
+            <h5 class="mt-2">Veuillez choisir le type du bien</h5>
+            <div class="radio-holder">
+              <label [ngClass]="{'selected-type': type.value=='apartment'}" class="radio-icon">
+                <input type="radio" formControlName="type" value="apartment" checked>
+                <i class="fa fa-building r-icon"></i>
+                <h6 class="mt-2">Appartement</h6>
+              </label>
+              <label [ngClass]="{'selected-type': type.value=='house'}" class="radio-icon">
+                <input type="radio" formControlName="type" value="house">
+                <i class="fa fa-home r-icon"></i>
+                <h6 class="mt-2">Maison</h6>
+              </label>
+            </div>
+            <div *ngIf="tab1Submitted || type.touched">
+              <span *ngIf="type.errors?.required" class="text-danger"> Vous devez spécifier le type du bien</span>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="2">
+        <a ngbNavLink>Détail du bien</a>
+        <ng-template ngbNavContent>
+          <div class="inputs-holder">
+            <h5 class="mt-2">Veuillez spécifier les détails du bien</h5>
+            <div class="form-row pt-2">
+              <div class="form-group col-md-4">
+                <label for="pricePerM">Prix au m²</label>
+                <input [ngClass]="{'is-invalid': pricePerM.errors && (tab2Submitted || pricePerM.touched),'is-valid':!pricePerM.errors && (tab2Submitted || pricePerM.touched)}" type="number" formControlName="pricePerM" min="0" class="form-control form-control-lg" id="pricePerM">
+                <div *ngIf="tab2Submitted || pricePerM.touched">
+                  <span *ngIf="pricePerM.errors?.required" class="text-danger"> Vous devez spécifier le prix</span>
+                  <span *ngIf="pricePerM.errors?.min" class="text-danger"> Vous devez spécifier un prix valide</span>
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="surface">Surface en m²</label>
+                <input [ngClass]="{'is-invalid': area.errors && (tab2Submitted || area.touched),'is-valid':!area.errors && (tab2Submitted || area.touched)}" type="number" formControlName="area" min="6" class="form-control form-control-lg" id="surface">
+                <div *ngIf="tab2Submitted || area.touched">
+                  <span *ngIf="area.errors?.required" class="text-danger"> Vous devez spécifier la surface</span>
+                  <span *ngIf="area.errors?.min" class="text-danger"> Vous devez spécifier une surface valide</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="nbPiece">Nombre de pièces</label>
+                <select formControlName="roomNumber"  [ngClass]="{'is-invalid': roomNumber.errors && (tab2Submitted || roomNumber.touched),'is-valid':!roomNumber.errors && (tab2Submitted || roomNumber.touched)}" class="form-control form-control-lg" id="nbPiece">
+                  <option [value]="1">Une pièce</option>
+                  <option [value]="2">2 pièces</option>
+                  <option [value]="3">3 pièces</option>
+                  <option [value]="4">4 pièces</option>
+                  <option [value]="5">5 pièces ou plus</option>
+                </select>
+                <div *ngIf="tab2Submitted || roomNumber.touched">
+                  <span *ngIf="roomNumber.errors?.required" class="text-danger"> Vous devez spécifier le nombre de piéce</span>
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="state">Etat du bien</label>
+                <select formControlName="state" [ngClass]="{'is-invalid': state.errors && (tab2Submitted || state.touched),'is-valid':!state.errors && (tab2Submitted || state.touched)}" class="form-control form-control-lg" id="state">
+                  <option [value]="'new'">Refait à neuf</option>
+                  <option [value]="'good'">Bon état</option>
+                  <option [value]="'requires-maintenance'">Nécessite des travaux</option>
+                </select>
+                <div *ngIf="tab2Submitted || state.touched">
+                  <span *ngIf="state.errors?.required" class="text-danger"> Vous devez spécifier l'état du bien'</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="3">
+        <a ngbNavLink>Bilan</a>
+        <ng-template ngbNavContent>
+          <h5 class="mt-2">Bilan de l'estimation</h5>
+          <div class="inputs-holder">
+            <div class="d-flex flex-row text-large flex-wrap">
+              <span class="badge badge-success badge-pill mr-2 px-3 py-2">{{submittedEstimation.type === 'house' ? 'Maison' : 'Appartement' }}</span>
+              <span class="badge badge-success badge-pill mr-2 px-3 py-2">{{submittedEstimation.pricePerM}} Euro/m²</span>
+              <span class="badge badge-success badge-pill mr-2 px-3 py-2">{{submittedEstimation.area}} m²</span>
+              <span class="badge badge-success badge-pill mr-2 px-3 py-2">{{submittedEstimation.roomNumber}} pièces</span>
+              <span class="badge badge-success badge-pill mr-2 px-3 py-2">{{submittedEstimation.state === 'new' ? 'Refait à neuf' : submittedEstimation.state === 'good' ? 'Bon état' : 'Nécessite des travaux'}}</span>
+            </div>
+            <div class="d-flex mt-5 pt-2" style="justify-content: flex-end;">
+              <h3 class="">Prix estimé: {{submittedEstimation.finalPrice | number:'2.2'}} Euro</h3>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+    <button *ngIf="!(tab2Submitted && submittedEstimation) && f.invalid" type="button" (click)="goNext()" class="btn btn-lg float-right btn-outline-success">Suivant</button>
+    <button *ngIf="!(tab2Submitted && submittedEstimation) && f.valid" type="button" (click)="goNext()" class="btn btn-lg float-right btn-success">Estimer</button>
+    <button *ngIf="tab2Submitted && submittedEstimation" type="button" (click)="onReset()" class="btn btn-lg float-right btn-secondary">Estimer de nouveau</button>
+
+
+  </form>
+</div>
+
